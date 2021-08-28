@@ -1,31 +1,16 @@
 <?php
 
-/*namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Auth; 
-use Illuminate\Support\Facades\DB;
-
-//use App\User; 
-//use App\Model\User;
-use Socialite;*/
-namespace App\Http\Controllers\Auth;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
-use Socialite;
-
+use Laravel\Socialite\Facades\Socialite;
 use Auth;
 
-use Exception;
+//use Exception;
 
 use App\Models\User;
-
 class LoginController extends Controller
 {
     /*
@@ -46,7 +31,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-   // protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = RouteServiceProvider::HOME;
 
     /**
      * Create a new controller instance.
@@ -57,49 +42,26 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
-	
-	public function redirectToProvider()
-	{
-		return Socialite::driver('google')->redirect();
+	public function socialLogin($social)
+	   {
+		   return Socialite::driver($social)->redirect();
+	   }
+	public function handleProviderCallback($social)
+	   {
+		   $userSocial = Socialite::driver($social)->user();
+		   
+		   $user = User::where(['email' => $userSocial->getEmail()])->first();
+		   if($user){
+			   Auth::login($user);
+			   
+		   }else{
+			   
+			   $newUser                  = new User;
+			   $newUser->name            = $userSocial->getName();
+			   $newUser->email           = $userSocial->getEmail();
+			   $newUser->save();
+			   auth()->login($newUser, true);
+		   }
+		   return redirect()->to('/home');
+	   } 
 	}
-	
-	
-	public function handleProviderCallback()
-    {
-        try {
-            $user = Socialite::driver('google')->user();
-        } catch (\Exception $e) {
-            return redirect('/login');
-        }
-		//print_r(); exit;
-        // only allow people with @company.com to login
-        
-        // check if they're an existing user
-        $existingUser = User::where('email', $user->email)->first();
-		//var_dump($existingUser);
-		//exit;
-        if($existingUser != NULL){
-            // log them in
-            auth()->login($existingUser, true);
-        } else {
-            // create a new user
-            $newUser                  = new User;
-            $newUser->name            = $user->name;
-            $newUser->email           = $user->email;
-            $newUser->google_id       = $user->id;
-            $newUser->avatar          = $user->avatar;
-            $newUser->avatar_original = $user->avatar_original;
-            $newUser->save();
-            auth()->login($newUser, true);
-        }
-        return redirect()->to('/home');
-		
-
-    }
-
-
-
-
-    
-	
-}

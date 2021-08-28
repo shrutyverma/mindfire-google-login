@@ -29,10 +29,16 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+	'facebook' => [
+	   'client_id' => '142291624732207', //Facebook API
+	   'client_secret' => '7a7accb424fa01df51b4d58dd3359957', //Facebook Secret
+	   'redirect' => 'http://localhost/mindfire/laravel/login/facebook/callback',
+	],
+
 	'google' => [
-		'client_id'     => env('GOOGLE_CLIENT_ID'),
-		'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-		'redirect'      => env('GOOGLE_REDIRECT')
+	   'client_id' => '482453504227-mvo27j2jnfdf4qnqueu22u1idjo46h0o.apps.googleusercontent.com',
+	   'client_secret' => 'jdhO8EBAx16cAHwnFW6xYsZe',
+	   'redirect' => 'http://localhost/mindfire/laravel/login/google/callback',
 	],
 
 ];

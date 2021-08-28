@@ -21,5 +21,5 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/google-login', 'App\Http\Controllers\Auth\LoginController@redirectToProvider');
-Route::get('/callback', 'App\Http\Controllers\Auth\LoginController@handleProviderCallback');
+Route::get('/login/{social}','App\Http\Controllers\Auth\LoginController@socialLogin')->where('social','facebook|google');
+Route::get('/login/{social}/callback','App\Http\Controllers\Auth\LoginController@handleProviderCallback')->where('social','facebook|google');
